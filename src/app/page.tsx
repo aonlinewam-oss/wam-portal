@@ -26,6 +26,9 @@ export default function HomePage() {
               </h1>
               <p className="mb-8 max-w-xl text-lg leading-relaxed text-emerald-50 md:text-xl">
                 West African Institute of Management, an online institute for accessible, industry-relevant learning.
+                <span className="mt-2 block text-base font-medium text-emerald-100 md:text-lg">
+                  [Education, to the point, current and getting you on your way to contriuting to society]
+                </span>
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Link

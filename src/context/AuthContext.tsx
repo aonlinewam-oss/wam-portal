@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { parseUserProfile } from "@/types/portal";
 
 export type UserRole =
   | "student"
@@ -54,20 +55,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      if (currentUser) {
-        // Fetch profile record from Firestore
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userDocRef);
+      try {
+        if (currentUser) {
+          // Fetch profile record from Firestore
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userSnap = await getDoc(userDocRef);
 
-        if (userSnap.exists()) {
-          setProfile(userSnap.data() as UserProfile);
+          setProfile(userSnap.exists() ? parseUserProfile(userSnap.data()) : null);
         } else {
           setProfile(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Failed to load user profile:", error);
         setProfile(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();

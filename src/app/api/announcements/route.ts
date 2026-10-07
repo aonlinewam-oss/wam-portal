@@ -5,9 +5,10 @@ export async function GET() {
   try {
     const announcements = await getAnnouncements();
     return NextResponse.json({ success: true, data: announcements });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    console.error("Failed to fetch announcements:", error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: "Failed to load announcements." },
       { status: 500 }
     );
   }

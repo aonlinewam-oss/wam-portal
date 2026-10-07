@@ -16,6 +16,10 @@ import {
   CourseItem,
   GradeEntry,
   Announcement,
+  parseStudentRecord,
+  parseFeeStructure,
+  parseCourseItem,
+  parseAnnouncement,
 } from "@/types/portal";
 
 // --- Fee Management (Finance Hub) ---
@@ -29,8 +33,8 @@ export async function getFeeStructures(): Promise<FeeStructure[]> {
   const snapshot = await getDocs(colRef);
   return snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
-    ...docSnap.data(),
-  })) as FeeStructure[];
+    ...parseFeeStructure(docSnap.data()),
+  }));
 }
 
 // --- Course Catalog & Google Classroom Links (Registrar / Deans) ---
@@ -52,8 +56,8 @@ export async function getCourses(): Promise<CourseItem[]> {
   const snapshot = await getDocs(colRef);
   return snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
-    ...docSnap.data(),
-  })) as CourseItem[];
+    ...parseCourseItem(docSnap.data()),
+  }));
 }
 
 // --- Student & Academic Records ---
@@ -64,7 +68,7 @@ export async function getStudentProfile(
   const snapshot = await getDocs(q);
   if (!snapshot.empty) {
     const firstDoc = snapshot.docs[0];
-    return { id: firstDoc.id, ...firstDoc.data() } as StudentRecord;
+    return { id: firstDoc.id, ...parseStudentRecord(firstDoc.data()) };
   }
   return null;
 }
@@ -85,6 +89,6 @@ export async function getAnnouncements(): Promise<Announcement[]> {
   const snapshot = await getDocs(colRef);
   return snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
-    ...docSnap.data(),
-  })) as Announcement[];
+    ...parseAnnouncement(docSnap.data()),
+  }));
 }
